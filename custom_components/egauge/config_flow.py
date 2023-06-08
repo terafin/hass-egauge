@@ -6,6 +6,8 @@ from homeassistant import config_entries
 from .const import CONF_EGAUGE_URL
 from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
+from .const import CONF_INVERT_VALUES
+from .const import CONF_ENTITY_PREFIX
 from .const import DOMAIN
 
 
@@ -51,6 +53,8 @@ class EGaugeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     ): str,
                     vol.Optional(CONF_USERNAME, default=""): str,
                     vol.Optional(CONF_PASSWORD, default=""): str,
+                    vol.Optional(CONF_INVERT_VALUES, default=False): bool,
+                    vol.Optional(CONF_ENTITY_PREFIX, default="egauge"): str,
                 }
             ),
             errors=self._errors,

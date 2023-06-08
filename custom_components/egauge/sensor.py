@@ -14,6 +14,8 @@ from .const import EGAUGE_INSTANTANEOUS
 from .const import EGAUGE_UNIT_CONVERSIONS
 from .const import EGAUGE_UNITS
 from .const import HISTORICAL_INTERVALS
+from .const import CONF_INVERT_VALUES
+from .const import CONF_ENTITY_PREFIX
 from .const import ICON
 from .const import TODAY
 from .entity import EGaugeEntity
@@ -96,7 +98,10 @@ class EGaugeSensor(EGaugeEntity, SensorEntity):
         if self.is_historical:
             return f"{DEFAULT_NAME} {self.interval} {self.register_name}"
         else:
-            return f"{DEFAULT_NAME} {self.register_name}"
+            if CONF_ENTITY_PREFIX:
+                return f"{CONF_ENTITY_PREFIX} {self.register_name}"
+            else:
+                return f"{DEFAULT_NAME} {self.register_name}"
 
     @property
     def state(self):
@@ -106,6 +111,9 @@ class EGaugeSensor(EGaugeEntity, SensorEntity):
             data = data[self.interval]
         value = data.get(self.register_name)
         value = value * self.unit_conversion
+        if CONF_INVERT_VALUES:
+            value = value * -1.0
+
         return f"{value:.2f}"
 
     @property

@@ -31,6 +31,8 @@ CONF_ENABLED = "enabled"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
 CONF_EGAUGE_URL = "egauge_url"
+CONF_INVERT_VALUES = False
+CONF_ENTITY_PREFIX = "egauge"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
