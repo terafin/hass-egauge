@@ -4,10 +4,12 @@ from typing import Any
 
 from egauge_async import EgaugeClient
 from homeassistant import config_entries
+from homeassistant.core import callback
+import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 
 from . import _LOGGER
-from .const import CONF_EGAUGE_URL, CONF_PASSWORD, CONF_USERNAME, DOMAIN
+from .const import CONF_EGAUGE_URL, CONF_INVERT_SENSORS, CONF_PASSWORD, CONF_USERNAME, DOMAIN
 
 
 class EGaugeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -57,6 +59,53 @@ class EGaugeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ),
             errors=self._errors,
+        )
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return OptionsFlowHandler(config_entry)
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options flow for eGauge."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self.config_entry = config_entry
+        self._available_sensors = []
+
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        errors = {}
+
+        # Get available sensors from coordinator
+        try:
+            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id]
+            if coordinator.data and coordinator.data.get("instantaneous"):
+                self._available_sensors = list(coordinator.data["instantaneous"].keys())
+        except (KeyError, AttributeError):
+            self._available_sensors = []
+
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Get currently selected inverted sensors
+        current_inverted = self.config_entry.options.get(CONF_INVERT_SENSORS, [])
+
+        # Create multi-select schema
+        sensor_options = {sensor: sensor for sensor in self._available_sensors}
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Optional(
+                    CONF_INVERT_SENSORS,
+                    default=current_inverted
+                ): cv.multi_select(sensor_options),
+            }),
+            errors=errors,
         )
 
     async def _test_credentials(self, url: str, username: str, password: str) -> bool:

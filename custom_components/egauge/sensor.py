@@ -119,7 +119,11 @@ class EGaugeSensor(EGaugeEntity, SensorEntity):
         data = self.coordinator.data[self.data_type]
         if self.is_historical:
             data = data[self.interval]
-        value = data.get(self.register_name)
+        raw_value = data.get(self.register_name)
+        # Apply inversion if configured
+        if self.register_name in getattr(self.coordinator, 'invert_sensors', []):
+            raw_value = -raw_value if raw_value is not None else None
+        value = raw_value
         value = value * self.unit_conversion
         return f"{value:.2f}"
 

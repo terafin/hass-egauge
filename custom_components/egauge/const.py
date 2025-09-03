@@ -28,6 +28,7 @@ CONF_ENABLED = "enabled"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"  # noqa: S105
 CONF_EGAUGE_URL = "egauge_url"
+CONF_INVERT_SENSORS = "invert_sensors"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

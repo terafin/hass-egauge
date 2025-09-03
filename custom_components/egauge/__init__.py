@@ -18,6 +18,7 @@ from .const import (
     CONF_EGAUGE_URL,
     CONF_PASSWORD,
     CONF_USERNAME,
+    CONF_INVERT_SENSORS,
     DAILY,
     DOMAIN,
     EGAUGE_HISTORICAL,
@@ -63,12 +64,23 @@ async def async_setup_entry(
     if not coordinator.last_update_success:
         raise exceptions.ConfigEntryNotReady
 
+    # Store inverted sensors configuration
+    coordinator.invert_sensors = entry.options.get(CONF_INVERT_SENSORS, [])
+
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
     await hass.config_entries.async_forward_entry_setups(entry, [SENSOR])
 
     entry.add_update_listener(async_reload_entry)
     return True
+
+
+async def async_update_options(
+    hass: core.HomeAssistant, entry: config_entries.ConfigEntry
+) -> None:
+    """Update options."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator.invert_sensors = entry.options.get(CONF_INVERT_SENSORS, [])
 
 
 class EGaugeDataUpdateCoordinator(DataUpdateCoordinator):
@@ -82,6 +94,7 @@ class EGaugeDataUpdateCoordinator(DataUpdateCoordinator):
     ) -> None:
         """Initialize."""
         self.client = client
+        self.invert_sensors = []
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=update_interval)
 
     @override
@@ -148,3 +161,5 @@ async def async_reload_entry(
     """Reload config entry."""
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator.invert_sensors = entry.options.get(CONF_INVERT_SENSORS, [])
