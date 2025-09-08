@@ -110,8 +110,8 @@ class EGaugeSensor(EGaugeEntity, SensorEntity):
     def name(self) -> str:
         """Return the name of the sensor."""
         if self.is_historical:
-            return f"{DEFAULT_NAME} {self.interval} {self.register_name}"
-        return f"{DEFAULT_NAME} {self.register_name}"
+            return f"{self.interval} {self.register_name}"
+        return f"{self.register_name}"
 
     @property
     def state(self) -> str:
