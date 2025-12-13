@@ -1,5 +1,9 @@
 # eGauge
 
+## This repo will be archived
+
+An eGauge integration has been [merged](https://github.com/home-assistant/core/pull/155279) to Home Assistant Core and should be available in the 2026.01 release. Once the core eGauge integration has been released, this repository will be archived and will receive no futher updates. Anyone interested in continuing to maintain this code as a custom component is welcome to fork.
+
 ## Features
 
 This component will set up sensors to track both instantaneous and historical data from
