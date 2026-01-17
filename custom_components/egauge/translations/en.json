@@ -8,6 +8,12 @@
           "username": "Username",
           "password": "Password"
         }
+      },
+      "inverted": {
+        "description": "Select sensors to invert so they show up in HomeAssistant Energy Management property.",
+        "data": {
+          "invert_sensors": "Sensors to invert"
+        }
       }
     },
     "error": {

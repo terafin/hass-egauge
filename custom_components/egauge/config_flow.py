@@ -22,6 +22,18 @@ class EGaugeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._errors = {}
 
+    async def _test_credentials(self, url: str, username: str, password: str) -> bool:
+        """Return true if credentials is valid."""
+        try:
+            client = EgaugeClient(url, username, password)
+            await client.get_instantaneous_registers()
+            await client.close()
+        except Exception:  # noqa: BLE001
+            _LOGGER.info("credentials did not validate")
+        else:
+            return True
+        return False
+
     async def async_step_user(self, user_input: dict[str, Any] | None = None):
         """Handle a flow initialized by the user."""
         self._errors = {}
@@ -98,7 +110,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         sensor_options = {sensor: sensor for sensor in self._available_sensors}
 
         return self.async_show_form(
-            step_id="init",
+            step_id="inverted",
             data_schema=vol.Schema({
                 vol.Optional(
                     CONF_INVERT_SENSORS,
@@ -107,15 +119,3 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             }),
             errors=errors,
         )
-
-    async def _test_credentials(self, url: str, username: str, password: str) -> bool:
-        """Return true if credentials is valid."""
-        try:
-            client = EgaugeClient(url, username, password)
-            await client.get_instantaneous_registers()
-            await client.close()
-        except Exception:  # noqa: BLE001
-            _LOGGER.info("credentials did not validate")
-        else:
-            return True
-        return False
