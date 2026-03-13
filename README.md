@@ -1,8 +1,10 @@
 # eGauge
 
-## This repo will be archived
+## This repository is archived
 
-An eGauge integration has been [merged](https://github.com/home-assistant/core/pull/155279) to Home Assistant Core and should be available in the 2026.01 release. Once the core eGauge integration has been released, this repository will be archived and will receive no futher updates. Anyone interested in continuing to maintain this code as a custom component is welcome to fork.
+An [eGauge integration is now available in Home Assistant](https://www.home-assistant.io/integrations/egauge/). This repository is archived and will receive no futher updates. Everyone is advised to migrate to the core eGauge integration following [these instructions](https://github.com/neggert/hass-egauge/issues/339).
+
+Anyone interested in continuing to maintain this code as a custom component is welcome to fork. 
 
 ## Features
 
